@@ -1,0 +1,25 @@
+name: Bot Audit Command
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install google-api-python-client
+
+      - name: Run Bot of Alliance
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          VIDEO_ID: ${{ github.event.issue.title }}
+        run: python main.py
