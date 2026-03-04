@@ -1,25 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>ANTICLANCARIA | Command Portal</title>
+    <meta charset="UTF-8">
+    <title>UDAAC: REPORT-THE-MACHINES Portal</title>
+    <style>
+        body { font-family: monospace; background-color: #0d1117; color: #c9d1d9; padding: 20px; }
+        .container { max-width: 800px; margin: auto; border: 1px solid #30363d; padding: 20px; border-radius: 6px; }
+        textarea, input { width: 100%; background: #161b22; border: 1px solid #30363d; color: white; padding: 10px; margin-top: 10px; border-radius: 4px; }
+        button { background-color: #238636; color: white; padding: 10px 20px; border: none; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        button:hover { background-color: #2ea043; }
+        label { font-weight: bold; color: #58a6ff; }
+    </style>
 </head>
-<body style="background: #000; color: #0f0; font-family: monospace; text-align: center; padding-top: 100px;">
-    <h1 style="text-shadow: 0 0 10px #0f0;">🛡️ ANTICLANCARIA</h1>
-    <p style="letter-spacing: 2px;">NUMQUAM SCIABIS QUI EGO SUM.</p>
-    <br><br>
-    
-    <div style="border: 1px solid #0f0; display: inline-block; padding: 30px; box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);">
-        <label>TARGET VIDEO ID:</label><br><br>
-        <form action="https://github.com/report-the-machines/report-the-machines.github.io/issues/new" method="get" target="_blank">
-            <input type="text" name="title" style="background:#111; color:#0f0; border:1px solid #0f0; padding:10px; width: 250px;" placeholder="Enter 11-char ID..." required>
-            <input type="hidden" name="body" value="Mission: Neutralize Clankers. Initiating automated audit.">
-            <br><br>
-            <button type="submit" style="background:#0f0; color:#000; padding:10px 20px; cursor:pointer; font-weight: bold; border: none; text-transform: uppercase;">
-                🚀 Deploy Scanner
-            </button>
+<body>
+    <div class="container">
+        <h2>🛰️ BOA: Bot Observation Array</h2>
+        <form action="/hunt" method="post">
+            <label for="video_id">Target Video ID or URL:</label>
+            <input type="text" id="video_id" name="video_id" placeholder="e.g., dQw4w9WgXcQ" required>
+
+            <label for="video_summary" style="display: block; margin-top: 20px;">Video Context Summary (Human-Detection Filter):</label>
+            <textarea id="video_summary" name="video_summary" rows="4" placeholder="Describe the video topic (e.g., rifle, firing squad, empty chamber, military history)"></textarea>
+            
+            <p><small>* The BOA uses this summary to distinguish between fans talking about the video and generic bot scripts.</small></p>
+            
+            <button type="submit">DEPLOY SCAN</button>
         </form>
     </div>
-
-    <p style="margin-top: 40px; font-size: 0.7em; color: #050;">[ CONNECTION SECURE // ENCRYPTED ACCESS ]</p>
 </body>
 </html>
