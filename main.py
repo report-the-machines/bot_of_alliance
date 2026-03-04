@@ -2,10 +2,18 @@ import os
 import re
 from googleapiclient.discovery import build
 
-# --- ANTICLANCARIA: BOT OF ALLIANCE ---
-# Pulling secrets from the GitHub Vault
+# --- ANTICLANCARIA: BOT OF ALLIANCE (BOA) ---
+# UDAAC Technical Engineering Wing
 API_KEY = os.environ.get("YT_API_KEY")
 VIDEO_ID = os.environ.get("VIDEO_ID")
+
+# The Engineering Disclaimer for GitHub Issue/Summary output
+DISCLAIMER = (
+    "> [!IMPORTANT]\n"
+    "> **Thanks for using REPORT-THE-MACHINES.** Please remember this is not 100% accurate yet, "
+    "and always double check users before reporting.\n\n"
+    "---"
+)
 
 def is_bot_text(text):
     text_lower = text.lower()
@@ -29,18 +37,25 @@ def check_channels_batch(youtube, channel_ids, comment_map):
         vids = int(channel_stats.get("videoCount", 0))
         comment_text = comment_map.get(c_id, "")
         
+        # Check for external scam links in bio
         has_link = len(re.findall(r'(https?://[^\s]+|www\.[^\s]+)', bio)) > 0
-        is_hardcore = (vids == 0 and has_link)
-        is_phrase = is_bot_text(comment_text)
+        
+        # Logic Classification
+        is_hardcore = (vids == 0 and has_link)  # Classic Grade A Signature
+        is_phrase = is_bot_text(comment_text)   # Grade B/C Pattern Match
 
         if is_hardcore or is_phrase:
             print(f"### [!] NEUTRALIZED: {snippet['title']}")
-            print(f"- **Logic:** {'Pattern Match' if is_phrase else 'Metadata Signature'}")
+            print(f"- **Target Grade:** {'Grade A (Scammer)' if is_hardcore else 'Grade B (Persona)'}")
+            print(f"- **Logic:** {'Pattern Match' if is_phrase else 'Metadata Signature (Scam Bio)'}")
             print(f"- **Comment:** \"{comment_text}\"")
             print(f"- **Intel:** https://youtube.com/channel/{c_id}\n")
 
 def hunt(youtube, video_id):
+    # Print the UDAAC Disclaimer first
+    print(DISCLAIMER)
     print(f"## 🛰️ DEPLOYING TO TARGET: {video_id}\n")
+    
     try:
         request = youtube.commentThreads().list(
             part="snippet", videoId=video_id, maxResults=100, textFormat="plainText"
@@ -52,10 +67,12 @@ def hunt(youtube, video_id):
             
             for item in response.get("items", []):
                 s = item["snippet"]["topLevelComment"]["snippet"]
-                c_id = s["authorChannelId"]["value"]
-                ids.append(c_id)
-                mapping[c_id] = s["textDisplay"]
+                if "authorChannelId" in s:
+                    c_id = s["authorChannelId"]["value"]
+                    ids.append(c_id)
+                    mapping[c_id] = s["textDisplay"]
             
+            # Batch process channel metadata in groups of 50 (API Limit)
             for i in range(0, len(ids), 50):
                 check_channels_batch(youtube, ids[i:i+50], mapping)
             
