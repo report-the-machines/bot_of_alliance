@@ -1,40 +1,37 @@
-name: Bot Audit Command
+name: UDAAC Bot Hunt
 on:
   issues:
-    types: [opened]
-
-permissions:
-  issues: write
-  contents: read
+    types: [opened, edited]
 
 jobs:
-  audit:
+  scan-sector:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
       - name: Install Dependencies
-        run: pip install google-api-python-client
+        run: pip install google-api-python-client flask
 
-      - name: Run Bot of Alliance
-        id: hunt_step
+      - name: Deploy BOA Intelligence
         env:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
           VIDEO_ID: ${{ github.event.issue.title }}
-        run: |
-          python main.py > report.txt
-          
-      - name: Post Results to Issue
-        uses: peter-evans/create-or-update-comment@v3
+          VIDEO_SUMMARY: ${{ github.event.issue.body }}
+        run: python main.py
+
+      - name: Post Intel Report
+        uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.issue.number }}
-          body-file: 'report.txt'
+          body-path: 'comment.md'
 
       - name: Close Intelligence Report
         run: gh issue close ${{ github.event.issue.number }}
